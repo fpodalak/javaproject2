@@ -1,33 +1,36 @@
 package javaproject;
 
-public class Dog implements Runnable{
-    private int x;
-    private int y;
-    private Field field;
+public class Dog extends Unit implements Runnable{
     private int moveTime;
     private int eatTime;
     
     public Dog(int x, int y, int moveTime, int eatTime, Field field) {
+        super(x, y, field);
         this.x = x;
         this.y = y;
         this.moveTime = moveTime;
         this.eatTime = eatTime;
         this.field = field;
         this.field.getCell(x, y).setDog();
+        Main.units.add(this);
     }
+
     public void run() {
         while (true) {
             try {
-                if(field.getCell(x, y).hasRabbit())
+                while (Main.isprinting) {
+                    Thread.sleep(1);
+                }
+                Rabbit currentRabbit = field.getCell(x, y).getRabbit();
+                if(currentRabbit != null && currentRabbit.isAlive())
                 {
-                    Thread.sleep(eatTime);
-                    eat();
+                    eat(currentRabbit);
                 }else{
                     int[] detection = detectRabbit();
                     if (detection != null) {
                         this.moveTowardsRabbit(detection[0], detection[1]);
                     } else {
-                        this.moveRandomly();
+                        this.move();
                     }
                     Thread.sleep(moveTime);
                 }
@@ -50,7 +53,7 @@ public class Dog implements Runnable{
         return null;
     }
 
-    public void moveRandomly() {
+    protected void move() {
         int dx;
         int dy;
         if (Math.random() < 0.5) {
@@ -63,10 +66,12 @@ public class Dog implements Runnable{
         if (x + dx < 0 || x + dx >= field.getN() || y + dy < 0 || y + dy >= field.getN()) {
             return;
         }
-        field.getCell(x, y).removeDog();
-        x += dx;
-        y += dy;
-        field.getCell(x, y).setDog();
+        if (!field.getCell(x + dx, y + dy).hasDog()) {
+            field.getCell(x, y).removeDog();
+            x += dx;
+            y += dy;
+            field.getCell(x, y).setDog();
+        }
     }
 
     public void moveTowardsRabbit(int rabbitX, int rabbitY) {
@@ -82,14 +87,27 @@ public class Dog implements Runnable{
         if (x + dx < 0 || x + dx >= field.getN() || y + dy < 0 || y + dy >= field.getN()) {
             return;
         }
-        field.getCell(x, y).removeDog();
-        x += dx;
-        y += dy;
-        field.getCell(x, y).setDog();
+        if (!field.getCell(x + dx, y + dy).hasDog()) {
+            field.getCell(x, y).removeDog();
+            x += dx;
+            y += dy;
+            field.getCell(x, y).setDog();
+        }
         
     }
 
-    public void eat() {
-        // rabbit.die(x, y);
+    public void eat(Rabbit rabbit) {
+        field.getCell(rabbit.getX(), rabbit.getY()).removeRabbit();
+        rabbit.die();
+    }
+
+    public boolean isDog(){
+        return true;
+    }
+
+    public void p(){
+        System.out.println("Dog");
+        System.out.println("x: " + x);
+        System.out.println("y: " + y);
     }
 }

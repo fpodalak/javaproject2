@@ -2,7 +2,7 @@ package javaproject;
 
 public class Field {
     private int N;
-    private Cell[][] cells;
+    public Cell[][] cells;
 
     public Field(int N) {
         this.N = N;

@@ -1,11 +1,13 @@
 package javaproject;
 
+import java.util.Scanner;
 import java.util.Vector;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.concurrent.atomic.AtomicBoolean;
 /*
  * The deadline is the end of January(30th of January)
 
@@ -14,6 +16,7 @@ The farmers have a field of size NxN, where they grows carrots. Farmers move ran
 
 
 public class Main {
+    private static AtomicBoolean running = new AtomicBoolean(true);
     private static Field field;
     private static int carrots_eaten = 0;
 
@@ -21,7 +24,23 @@ public class Main {
         carrots_eaten++;
     }
 
+    public static Vector<Unit> units = new Vector<Unit>();
+    public static boolean isprinting = false;
+    public static boolean wantsToQuit = false;
+
     public static void main(String[] args) {
+        Thread inputThread = new Thread(() -> {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Press 'q' to stop the program...");
+            while (running.get()) {
+                String input = scanner.nextLine();
+                if (input.equalsIgnoreCase("q")) {
+                    running.set(false);
+                }
+            }
+        });
+        inputThread.start();
+        
         while (true) {
             System.out.print("Enter 'r' to run the simulation or 's' to display stats: ");
             String option = System.console().readLine().trim().toLowerCase();
@@ -94,6 +113,10 @@ public class Main {
         for (int i=0; i<numOfFarmers; i++) {
             int x = (int)(Math.random() * N);
             int y = (int)(Math.random() * N);
+            while (field.getCell(x, y).hasFarmer()) {
+                x = (int)(Math.random() * N);
+                y = (int)(Math.random() * N);
+            }
             Farmer farmer = new Farmer(x, y, farmerMoveTime, farmerPlantTime, farmerFixTime, field);
             Dog dog = new Dog(x, y, dogMoveTime, dogEatTime, field);
             entities.add(farmer);
@@ -103,10 +126,17 @@ public class Main {
         for (int i=0; i<numOfRabbits; i++) {
             int x = (int)(Math.random() * N);
             int y = (int)(Math.random() * N);
+            while (field.getCell(x, y).hasRabbit()) {
+                x = (int)(Math.random() * N);
+                y = (int)(Math.random() * N);
+            }
             Rabbit rabbit = new Rabbit(x, y, rabbitMoveTime, rabbitEatTime, field);
             entities.add(rabbit);
         }
-
+        
+        for (Unit unit : units) {
+            unit.p();
+        }
         for (Runnable entity : entities) {
             Thread thread = new Thread(entity);
             threads.add(thread);
@@ -120,7 +150,7 @@ public class Main {
         }
 
         Grid veiw = new Grid();
-        while (true) {
+        while (running.get()) {
             System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
             veiw.printGrid(field);
             try {
@@ -129,5 +159,16 @@ public class Main {
                 e.printStackTrace();
             }
         }
+
+        for (Thread thread : threads) {
+            thread.interrupt();
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("./game_stats.txt"))) {
+            writer.write("Carrots eaten: " + carrots_eaten);
+        } catch (IOException e) {
+            System.err.println("Failed to save game stats");
+        }
+        System.out.println("Program stopped.");
     }
 }

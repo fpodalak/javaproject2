@@ -24,6 +24,15 @@ public class Grid {
     }
 
     public void printGrid(Field field) {
+        Main.isprinting = true;
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (Unit unit : Main.units) {
+            unit.p();
+        }
         printHorizontalBorder(field.getN());
         for (int i = 0; i < field.getN(); i++) {
             for (int subRow = 0; subRow < 3; subRow++) {
@@ -37,6 +46,7 @@ public class Grid {
             printHorizontalBorder(field.getN());
         }
         System.out.println();
+        Main.isprinting = false;
     }
 
     private void printCellSubRow(Cell cell, int subRow) {

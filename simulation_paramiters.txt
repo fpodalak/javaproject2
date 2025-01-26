@@ -4,4 +4,4 @@ farmer_movement_speed = 1000
 farmer_plant_time = 3000
 farmer_fix_time = 3000
 dog_movement_speed = 800
-dog_eat_time = 800
+dog_eat_time = 0

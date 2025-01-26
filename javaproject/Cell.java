@@ -7,7 +7,7 @@ public class Cell {
     private boolean hasRabbit;
     private boolean hasCarrot;
     private boolean isDamaged;
-
+    
     public Cell(int x, int y) {
         this.x = x;
         this.y = y;
@@ -82,5 +82,32 @@ public class Cell {
 
     public boolean isDamaged() {
         return isDamaged;
+    }
+
+    public Rabbit getRabbit() {
+        for (Unit unit : Main.units) {
+            if (unit.isRabbit() && unit.getX() == x && unit.getY() == y) {
+                return (Rabbit) unit;
+            }
+        }
+        return null;
+    }
+
+    public Farmer getFarmer() {
+        for (Unit unit : Main.units) {
+            if (unit.isFarmer() && unit.getX() == x && unit.getY() == y) {
+                return (Farmer) unit;
+            }
+        }
+        return null;
+    }
+
+    public Dog getDog() {
+        for (Unit unit : Main.units) {
+            if (unit.isDog() && unit.getX() == x && unit.getY() == y) {
+                return (Dog) unit;
+            }
+        }
+        return null;
     }
 }
