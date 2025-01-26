@@ -3,14 +3,16 @@ package javaproject;
 public class Dog extends Unit implements Runnable{
     private int moveTime;
     private int eatTime;
+    private Farmer farmer;
     
-    public Dog(int x, int y, int moveTime, int eatTime, Field field) {
+    public Dog(int x, int y, int moveTime, int eatTime, Field field, Farmer farmer) {
         super(x, y, field);
         this.x = x;
         this.y = y;
         this.moveTime = moveTime;
         this.eatTime = eatTime;
         this.field = field;
+        this.farmer = farmer;
         this.field.getCell(x, y).setDog();
         Main.units.add(this);
     }
@@ -41,6 +43,10 @@ public class Dog extends Unit implements Runnable{
     }
 
     public int[] detectRabbit() {
+        int[] farmerPosition = farmer.detectRabbit();
+        if (field.getCell(farmerPosition[0], farmerPosition[1]).hasRabbit()) {
+            return farmerPosition;
+        }
         for (int dx = -5; dx <= 5; dx++) {
             for (int dy = -5; dy <= 5; dy++) {
                 if (x + dx >= 0 && x + dx < field.getN() && y + dy >= 0 && y + dy < field.getN()) {
@@ -93,7 +99,6 @@ public class Dog extends Unit implements Runnable{
             y += dy;
             field.getCell(x, y).setDog();
         }
-        
     }
 
     public void eat(Rabbit rabbit) {

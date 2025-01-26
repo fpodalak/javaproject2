@@ -30,10 +30,14 @@ public class Rabbit extends Unit implements Runnable{
                         damage();
                     }
                 }else{
-                    move();
+                    int[] detection = detectcarrot();
+                    if (detection != null) {
+                        this.moveTowardsCarrot(detection[0], detection[1]);
+                    } else {
+                        this.move();
+                    }
                     Thread.sleep(moveTime);
                 }
-                
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -60,7 +64,41 @@ public class Rabbit extends Unit implements Runnable{
             field.getCell(x, y).setRabbit();
         }
     }
-    
+
+    public void moveTowardsCarrot(int rabbitX, int rabbitY) {
+        int dx = rabbitX - x;
+        int dy = rabbitY - y;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            dx = dx > 0 ? 1 : -1;
+            dy = 0;
+        } else {
+            dx = 0;
+            dy = dy > 0 ? 1 : -1;
+        }
+        if (x + dx < 0 || x + dx >= field.getN() || y + dy < 0 || y + dy >= field.getN()) {
+            return;
+        }
+        if (!field.getCell(x + dx, y + dy).hasRabbit()) {
+            field.getCell(x, y).removeRabbit();
+            x += dx;
+            y += dy;
+            field.getCell(x, y).setRabbit();
+        }
+    }
+
+    public int[] detectcarrot() {
+        for (int dx = -5; dx <= 5; dx++) {
+            for (int dy = -5; dy <= 5; dy++) {
+                if (x + dx >= 0 && x + dx < field.getN() && y + dy >= 0 && y + dy < field.getN()) {
+                    if (field.getCell(x + dx, y + dy).hasCarrot()) {
+                        return new int[]{x + dx, y + dy};
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public void die() {
         alive = false;
         System.out.println("Rabbit died");
