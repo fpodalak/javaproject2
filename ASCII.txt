@@ -1,0 +1,85 @@
+package javaproject;
+
+public class Grid {
+    private static final String[][] RABBIT_ART = {
+        {"               "},
+        {"     (\\_/)     "},
+        {"     (o.o)     "},
+        {"     (>_<)     "},
+        {"               "}
+    };
+    
+    private static final String[][] DOG_ART = {
+        {"    / \\__      "},
+        {"   (    @\\___  "},
+        {"   /         O "},
+        {"  /   (_____/  "},
+        {"  /_____/   U  "}
+        
+    };
+    
+    private static final String[][] FARMER_ART = {
+        {"     _____     "},
+        {"    |     |    "},
+        {"    |     |    "},
+        {"  \\=========/  "},
+        {"               "}
+    };
+    
+    private static final String[][] CARROT_ART = {
+        {"               "},
+        {"  _\\/_   _\\/_  "},
+        {"  \\  /   \\  /  "},
+        {"   \\/     \\/   "},
+        {"               "}
+    };
+    
+    private static final String[][] EMPTY_ART = {
+        {"               "},
+        {"               "},
+        {"               "},
+        {"               "},
+        {"               "}
+    };
+
+    private static final String[][] DAMAGED_ART = {
+        {"   X     X     "},
+        {"    X      X  X"},
+        {"      XX       "},
+        {"    X       X  "},
+        {" X       XX    "}
+    };
+
+    public void printGrid(Field field) {
+        printHorizontalBorder(field.getN());
+        for (int i = 0; i < field.getN(); i++) {
+            for (int innerRow = 0; innerRow < 5; innerRow++) {
+                System.out.print("|");
+                for (int j = 0; j < field.getN(); j++) {
+                    String[][] artToPrint = getArtForCell(field.getCell(i, j));
+                    System.out.print(artToPrint[innerRow][0] + "|");
+                }
+                System.out.println();
+            }
+            printHorizontalBorder(field.getN());
+        }
+        System.out.println();
+    }
+
+    private String[][] getArtForCell(Cell cell) {
+        if (cell.hasRabbit()) return RABBIT_ART;
+        if (cell.hasDog()) return DOG_ART;
+        if (cell.hasFarmer()) return FARMER_ART;
+        if (cell.hasCarrot()) return CARROT_ART;
+        if (cell.isDamaged()) return DAMAGED_ART;
+        return EMPTY_ART;
+    }
+
+    private void printHorizontalBorder(int n) {
+        System.out.print("+");
+        for (int i = 0; i < n; i++) {
+            System.out.print("---------------+");
+        }
+        System.out.println();
+    }
+}
