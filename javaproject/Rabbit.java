@@ -23,8 +23,10 @@ public class Rabbit implements Runnable{
                 if(field.getCell(x, y).hasCarrot())
                 {
                     Thread.sleep(eatTime);
-                    eatCarrot();
-                    damage();
+                    if(alive) {
+                        eat();
+                        damage();
+                    }
                 }else{
                     move();
                     Thread.sleep(moveTime);
@@ -60,7 +62,7 @@ public class Rabbit implements Runnable{
         field.getCell(x, y).removeRabbit();
     }
     
-    private void eatCarrot() {
+    public void eat() {
         field.getCell(x, y).removeCarrot();
         Main.incrementCarrotsEaten();
     }

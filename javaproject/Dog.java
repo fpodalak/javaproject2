@@ -21,7 +21,7 @@ public class Dog implements Runnable{
                 if(field.getCell(x, y).hasRabbit())
                 {
                     Thread.sleep(eatTime);
-                    eatRabbit();
+                    eat();
                 }else{
                     int[] detection = detectRabbit();
                     if (detection != null) {
@@ -89,8 +89,7 @@ public class Dog implements Runnable{
         
     }
 
-    private void eatRabbit() {
-        field.getCell(x, y).removeRabbit();
-        // rabbit.die(x, y); //2:19, nie rozumuem, jestem zbyt zęczony - powinien być odnośnik do klasy rabbit, nie klasy field
+    public void eat() {
+        // rabbit.die(x, y);
     }
 }

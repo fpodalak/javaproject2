@@ -22,7 +22,25 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        while (true) {
+            System.out.print("Enter 'r' to run the simulation or 's' to display stats: ");
+            String option = System.console().readLine().trim().toLowerCase();
 
+            if (option.equals("s")) {
+                try (BufferedReader br = new BufferedReader(new FileReader("./game_stats.txt"))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        System.out.println(line);
+                    }
+                } catch (IOException e) {
+                    System.err.println("Failed to load game stats");
+                }
+            } else if (option.equals("r")) {
+                break;
+            } else {
+                System.out.println("Invalid option. Please try again.");
+            }
+        }
         System.out.print("Enter field size: ");
         int N = Integer.parseInt(System.console().readLine());
         System.out.print("Enter number of farmers: ");
@@ -65,7 +83,7 @@ public class Main {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to load simulation parameters");
             return;
         }
 
@@ -98,7 +116,7 @@ public class Main {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("./game_stats.txt"))) {
             writer.write("Carrots eaten: " + carrots_eaten);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to save game stats");
         }
 
         Grid veiw = new Grid();
